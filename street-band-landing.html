@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Уличные музыканты Москвы — живая музыка и открытый микрофон на вашем празднике</title>
+<meta name="description" content="Настоящие уличные музыканты из Москвы на корпоративы, свадьбы и дни рождения. Живой интерактив: гости поют и играют вместе с нами.">
+
+<!-- ШРИФТЫ. Если нужна полная независимость от интернета — заменить на base64 @font-face -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ТОКЕНЫ
+   Палитра: чёрный асфальт + кислотно-жёлтый (один акцент) + бумага афиши
+   ============================================================ */
+:root{
+  --ink:      #0B0B0C;   /* фон */
+  --ink-2:    #141417;   /* панели */
+  --ink-3:    #1E1E22;   /* бордеры/подложки */
+  --acid:     #E4FF3A;   /* единственный акцент */
+  --acid-dim: #A8BE22;
+  --paper:    #E9E4D8;   /* бумага расклеенной афиши */
+  --smoke:    #8F8D86;   /* второстепенный текст */
+
+  --display: 'Oswald', 'Arial Narrow', sans-serif;
+  --body:    'IBM Plex Sans', system-ui, sans-serif;
+  --mono:    'IBM Plex Mono', ui-monospace, monospace;
+
+  --wrap: 1180px;
+  --gap: clamp(56px, 9vw, 120px);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ink); color:#F2F1EE;
+  font-family:var(--body); font-size:17px; line-height:1.55;
+  overflow-x:hidden;
+}
+
+/* Зерно / шум поверх всей страницы */
+body::after{
+  content:""; position:fixed; inset:-50%; pointer-events:none; z-index:900;
+  opacity:.19; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wrap{width:100%; max-width:var(--wrap); margin:0 auto; padding:0 20px}
+section{padding:var(--gap) 0; position:relative}
+
+h1,h2,h3{font-family:var(--display); font-weight:700; text-transform:uppercase; margin:0; line-height:.94; letter-spacing:-.01em}
+h2{font-size:clamp(34px,6.4vw,68px)}
+h3{font-size:clamp(20px,2.6vw,26px); letter-spacing:.005em}
+p{margin:0 0 14px}
+a{color:inherit}
+
+/* Надзаголовок-«штамп» */
+.eyebrow{
+  font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--acid); margin-bottom:18px; display:block;
+}
+.lead{color:#CFCDC7; font-size:clamp(16px,2vw,19px); max-width:60ch}
+.muted{color:var(--smoke)}
+
+/* ── КНОПКИ ─────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  font-family:var(--display); text-transform:uppercase; font-weight:700;
+  font-size:clamp(15px,2vw,19px); letter-spacing:.04em;
+  padding:18px 34px; border:2px solid var(--acid); background:var(--acid); color:#0B0B0C;
+  text-decoration:none; cursor:pointer; transition:transform .12s, box-shadow .18s, background .18s, color .18s;
+  box-shadow:6px 6px 0 rgba(228,255,58,.22);
+}
+.btn:hover{transform:translate(-2px,-2px); box-shadow:10px 10px 0 rgba(228,255,58,.28); animation:jolt .32s ease}
+.btn:active{transform:translate(2px,2px); box-shadow:2px 2px 0 rgba(228,255,58,.2)}
+.btn--ghost{background:transparent; color:var(--acid); box-shadow:6px 6px 0 rgba(228,255,58,.10)}
+.btn--ghost:hover{background:var(--acid); color:#0B0B0C}
+.btn--wide{width:100%}
+@keyframes jolt{
+  0%,100%{rotate:0deg} 25%{rotate:-.7deg} 60%{rotate:.6deg}
+}
+:focus-visible{outline:3px solid var(--acid); outline-offset:3px}
+
+/* ── ЛЕНТА-СИГНАТУРА: «микрофон свободен» ───────────────── */
+.tape{
+  background:var(--acid); color:#0B0B0C; overflow:hidden; white-space:nowrap;
+  rotate:-1.1deg; margin:0 -3vw; padding:11px 0; position:relative; z-index:2;
+  border-top:2px solid #0B0B0C; border-bottom:2px solid #0B0B0C;
+}
+.tape--alt{rotate:1deg; background:var(--paper)}
+.tape span{
+  display:inline-block; font-family:var(--display); font-weight:700; text-transform:uppercase;
+  font-size:15px; letter-spacing:.18em; padding-right:30px;
+  animation:slide 26s linear infinite;
+}
+@keyframes slide{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+/* ── HERO ───────────────────────────────────────────────── */
+.hero{
+  min-height:100svh; display:flex; align-items:flex-end; padding:0 0 34px; position:relative; overflow:hidden;
+}
+.hero__bg{
+  position:absolute; inset:0; z-index:0;
+  /* TODO: подставить реальное фото уличного выступления (ч/б, контраст) */
+  background:#000 url('') center/cover no-repeat;
+  filter:grayscale(1) contrast(1.25);
+}
+.hero__bg::after{
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(228,255,58,.10), transparent 55%),
+    linear-gradient(180deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,.82) 55%, #0B0B0C 100%);
+}
+.hero .wrap{position:relative; z-index:1}
+.hero__top{
+  position:absolute; top:0; left:0; right:0; z-index:2; padding:22px 20px;
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+}
+.logo{font-family:var(--display); font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:18px}
+.logo b{color:var(--acid)}
+.hero__top a.mini{font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; text-decoration:none; color:var(--acid)}
+
+.hero h1{
+  font-size:clamp(42px,11.2vw,132px); line-height:.86; margin:0 0 22px; letter-spacing:-.02em;
+}
+.hero h1 .l1{display:block; transform:translateX(-.02em)}
+.hero h1 .l2{display:block; color:var(--acid); transform:translateX(.03em) rotate(-.5deg)}
+.hero__sub{
+  font-family:var(--display); font-weight:400; text-transform:none;
+  font-size:clamp(18px,2.8vw,29px); line-height:1.22; max-width:22ch; margin:0 0 30px; color:#EDEBE5;
+}
+.hero__sub em{font-style:normal; background:var(--acid); color:#0B0B0C; padding:0 .18em; box-decoration-break:clone}
+.hero__cta{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
+.hero__scroll{
+  margin-top:34px; font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--smoke)
+}
+
+/* ── СЕТКИ / КАРТОЧКИ ───────────────────────────────────── */
+.grid{display:grid; gap:18px}
+@media(min-width:760px){
+  .grid--3{grid-template-columns:repeat(3,1fr)}
+  .grid--2{grid-template-columns:repeat(2,1fr)}
+  .grid--4{grid-template-columns:repeat(4,1fr)}
+}
+.card{
+  background:var(--ink-2); border:1px solid var(--ink-3); padding:28px 24px 30px; position:relative;
+  transition:border-color .2s, transform .2s;
+}
+.card:hover{border-color:var(--acid); transform:translateY(-3px)}
+.card__num{
+  font-family:var(--mono); font-size:12px; letter-spacing:.2em; color:var(--acid); display:block; margin-bottom:14px;
+}
+.card h3{margin-bottom:10px}
+.card p{color:#BFBDB6; font-size:16px; margin:0}
+
+/* Секции-заголовки */
+.head{margin-bottom:38px; max-width:70ch}
+.head h2 span{color:var(--acid)}
+
+/* ── ВИДЕО + ФОТО ───────────────────────────────────────── */
+.video{
+  position:relative; aspect-ratio:16/9; background:#000; border:2px solid var(--ink-3);
+  display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer;
+}
+/* TODO: заменить .video на <iframe> с YouTube/VK/Rutube */
+.video::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(135deg,#151517,#0B0B0C 60%);
+}
+.video__play{
+  position:relative; z-index:1; width:92px; height:92px; border-radius:50%; background:var(--acid);
+  display:grid; place-items:center; transition:transform .2s;
+}
+.video__play::after{content:""; border-left:26px solid #0B0B0C; border-top:16px solid transparent; border-bottom:16px solid transparent; margin-left:6px}
+.video:hover .video__play{transform:scale(1.08)}
+.video__label{
+  position:absolute; z-index:1; bottom:16px; left:18px; font-family:var(--mono); font-size:11px;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--smoke)
+}
+.tiles{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:12px}
+@media(min-width:760px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{
+  aspect-ratio:3/4; background:#101012 url('') center/cover no-repeat; /* TODO: фото 1-4 */
+  filter:grayscale(1) contrast(1.15); border:1px solid var(--ink-3);
+  clip-path:polygon(0 2%,26% 0,58% 2%,100% 0,99% 34%,100% 71%,98% 100%,63% 98%,31% 100%,2% 99%,1% 62%,0 28%);
+  transition:filter .25s, transform .25s; position:relative;
+}
+.tile:hover{filter:grayscale(0) contrast(1.05); transform:rotate(-.8deg) scale(1.02)}
+.tile span{
+  position:absolute; inset:auto 0 0 0; padding:10px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--smoke); background:linear-gradient(transparent,rgba(0,0,0,.85))
+}
+.socials{display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; align-items:center}
+.social{
+  display:inline-flex; align-items:center; gap:10px; text-decoration:none; padding:13px 22px;
+  border:1px solid var(--ink-3); background:var(--ink-2); font-family:var(--display);
+  text-transform:uppercase; letter-spacing:.05em; font-size:15px; transition:.2s;
+}
+.social:hover{border-color:var(--acid); color:var(--acid)}
+.social svg{width:19px; height:19px; fill:currentColor}
+
+/* ── ТАЙМЛАЙН ───────────────────────────────────────────── */
+.steps{position:relative; display:grid; gap:0}
+.step{
+  display:grid; grid-template-columns:64px 1fr; gap:18px; padding:24px 0; border-top:1px solid var(--ink-3);
+}
+.step:last-child{border-bottom:1px solid var(--ink-3)}
+.step__n{
+  font-family:var(--display); font-size:38px; font-weight:700; color:var(--ink);
+  -webkit-text-stroke:1.5px var(--acid); line-height:1;
+}
+.step:last-child .step__n{color:var(--acid); -webkit-text-stroke:0}
+.step h3{margin-bottom:6px}
+.step p{color:#BFBDB6; margin:0; max-width:62ch}
+@media(min-width:900px){
+  .steps{grid-template-columns:repeat(4,1fr); gap:0}
+  .step{grid-template-columns:1fr; border-top:2px solid var(--ink-3); border-bottom:none; padding:22px 22px 26px 0}
+  .step:last-child{border-bottom:none; border-top-color:var(--acid)}
+  .step__n{margin-bottom:14px}
+}
+
+/* ── ФОРМАТЫ ────────────────────────────────────────────── */
+.format{
+  background:var(--paper); color:#131311; padding:32px 28px 34px; position:relative;
+  clip-path:polygon(0 1.5%,30% 0,70% 1.5%,100% 0,99.4% 40%,100% 100%,68% 98.5%,32% 100%,0 98.5%,.6% 55%);
+  rotate:-.5deg;
+}
+.format:nth-child(2){rotate:.6deg}
+.format h3{color:#131311; margin-bottom:8px}
+.format .eyebrow{color:#5C5A2E}
+.format ul{margin:16px 0 0; padding:0; list-style:none}
+.format li{padding:9px 0 9px 26px; border-top:1px dashed rgba(0,0,0,.22); position:relative; font-size:16px}
+.format li::before{content:"▸"; position:absolute; left:4px; color:#7A7A2E}
+.lineup{margin-top:20px; border:1px solid var(--ink-3); background:var(--ink-2); padding:26px 24px}
+.chips{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+.chip{
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid var(--ink-3); padding:9px 14px; color:#D5D3CC;
+}
+.chip--on{border-color:var(--acid); color:var(--acid)}
+
+/* ── ЦЕНЫ ───────────────────────────────────────────────── */
+.price{background:var(--ink-2); border:1px solid var(--ink-3); padding:30px 26px 32px; display:flex; flex-direction:column}
+.price--hot{border-color:var(--acid); box-shadow:8px 8px 0 rgba(228,255,58,.14)}
+.price__tag{font-family:var(--display); font-size:clamp(30px,4vw,44px); font-weight:700; color:var(--acid); margin:14px 0 4px; line-height:1}
+.price__tag small{font-family:var(--body); font-size:14px; font-weight:400; color:var(--smoke); text-transform:none; display:block; margin-top:4px}
+.price ul{list-style:none; margin:18px 0 26px; padding:0; flex:1}
+.price li{padding:9px 0 9px 24px; border-top:1px solid var(--ink-3); position:relative; font-size:15px; color:#C6C4BD}
+.price li::before{content:"—"; position:absolute; left:0; color:var(--acid-dim)}
+.badge{
+  position:absolute; top:-13px; right:18px; background:var(--acid); color:#0B0B0C; font-family:var(--mono);
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; padding:5px 11px;
+}
+.note{font-size:14px; color:var(--smoke); margin-top:18px}
+
+/* ── ФАКТЫ / ОТЗЫВЫ ─────────────────────────────────────── */
+.facts{display:grid; gap:2px; background:var(--ink-3); border:1px solid var(--ink-3)}
+@media(min-width:760px){.facts{grid-template-columns:repeat(3,1fr)}}
+.fact{background:var(--ink); padding:34px 24px; text-align:center}
+.fact b{display:block; font-family:var(--display); font-size:clamp(46px,7vw,74px); font-weight:700; color:var(--acid); line-height:1}
+.fact span{font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--smoke)}
+.quote{
+  background:var(--paper); color:#1A1A17; padding:26px 24px; rotate:-.6deg;
+  clip-path:polygon(0 2%,34% 0,72% 2%,100% 0,99% 48%,100% 100%,66% 98%,28% 100%,0 98%,1% 50%);
+}
+.quote:nth-child(2){rotate:.7deg}
+.quote p{font-size:17px; line-height:1.5; margin:0 0 14px}
+.quote cite{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#5C5A2E; font-style:normal}
+
+/* ── FAQ ────────────────────────────────────────────────── */
+.faq{border-top:1px solid var(--ink-3)}
+.faq__item{border-bottom:1px solid var(--ink-3)}
+.faq__q{
+  width:100%; background:none; border:0; color:inherit; text-align:left; cursor:pointer;
+  font-family:var(--display); text-transform:uppercase; font-weight:500; letter-spacing:.02em;
+  font-size:clamp(17px,2.4vw,23px); padding:22px 44px 22px 0; position:relative;
+}
+.faq__q::after{
+  content:"+"; position:absolute; right:6px; top:50%; translate:0 -50%; color:var(--acid);
+  font-size:26px; transition:rotate .22s;
+}
+.faq__item.open .faq__q::after{rotate:45deg}
+.faq__q:hover{color:var(--acid)}
+.faq__a{max-height:0; overflow:hidden; transition:max-height .28s ease}
+.faq__a p{color:#BFBDB6; padding:0 0 22px; margin:0; max-width:70ch; font-size:16px}
+
+/* ── ФОРМА ──────────────────────────────────────────────── */
+.final{background:linear-gradient(180deg,#0B0B0C,#141417)}
+.form{background:var(--ink-2); border:2px solid var(--ink-3); padding:clamp(24px,4vw,40px)}
+.field{margin-bottom:16px}
+.field label{
+  display:block; font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--smoke); margin-bottom:7px;
+}
+.field input,.field select{
+  width:100%; background:#0B0B0C; border:1px solid var(--ink-3); color:#F2F1EE; padding:15px 14px;
+  font-family:var(--body); font-size:16px; border-radius:0; appearance:none;
+}
+.field input:focus,.field select:focus{border-color:var(--acid); outline:none}
+.row{display:grid; gap:16px}
+@media(min-width:640px){.row{grid-template-columns:1fr 1fr}}
+.form__ok{
+  display:none; margin-top:16px; border:1px solid var(--acid); color:var(--acid); padding:14px;
+  font-family:var(--mono); font-size:13px; letter-spacing:.06em;
+}
+.form__ok.show{display:block}
+.alt{margin-top:26px}
+.alt p{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--smoke); margin-bottom:12px}
+
+/* ── ФУТЕР + МОБИЛЬНАЯ ПАНЕЛЬ ───────────────────────────── */
+footer{border-top:1px solid var(--ink-3); padding:30px 0 110px; font-size:14px; color:var(--smoke)}
+footer a{color:var(--acid); text-decoration:none}
+.sticky{
+  position:fixed; left:0; right:0; bottom:0; z-index:800; display:none; gap:8px; padding:10px;
+  background:rgba(11,11,12,.94); border-top:1px solid var(--ink-3); backdrop-filter:blur(6px);
+}
+.sticky .btn{flex:1; padding:15px 10px; font-size:15px; box-shadow:none}
+@media(max-width:759px){.sticky.on{display:flex}}
+
+/* ── ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ ──────────────────────────────── */
+.rv{opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease}
+.rv.in{opacity:1; transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1; transform:none; transition:none}
+  .tape span{animation:none}
+  .btn:hover{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     1. HERO
+     TODO: .hero__bg — фото/видео реального уличного выступления
+     ============================================================ -->
+<header class="hero">
+  <div class="hero__bg"></div>
+
+  <div class="hero__top">
+    <div class="logo">Уличная музыка <b>Москвы</b></div>
+    <!-- TODO: телефон -->
+    <a class="mini" href="tel:+70000000000">+7 (000) 000-00-00</a>
+  </div>
+
+  <div class="wrap">
+    <span class="eyebrow">Москва · улицы · живой звук каждый день</span>
+    <h1>
+      <span class="l1">Настоящие</span>
+      <span class="l2">уличные музыканты</span>
+    </h1>
+    <p class="hero__sub">Ваши гости не просто слушают — <em>они поют и играют вместе с нами.</em></p>
+    <div class="hero__cta">
+      <a class="btn" href="#zayavka">Оставить заявку</a>
+      <a class="btn btn--ghost" href="#video">Смотреть живое видео</a>
+    </div>
+    <div class="hero__scroll">↓ Листайте — покажем, как это выглядит</div>
+  </div>
+</header>
+
+<div class="tape" aria-hidden="true">
+  <span>Микрофон свободен · Гитара свободна · Подходи и пой · Микрофон свободен · Гитара свободна · Подходи и пой · Микрофон свободен · Гитара свободна · Подходи и пой · </span>
+</div>
+
+<!-- ============================================================
+     2. КОНТРАСТ
+     ============================================================ -->
+<section id="otlichie">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Чем мы не являемся</span>
+      <h2>Мы не кавер-группа <span>из каталога</span></h2>
+      <p class="lead">Агентство привезёт вам отрепетированный номер. Мы привезём вечер, который нигде больше не повторится.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <article class="card rv">
+        <span class="card__num">01 / Импровизация</span>
+        <h3>Играем по залу, а не по списку</h3>
+        <p>Программа складывается из того, как реагируют люди. Песню могут попросить прямо из зала — сыграем через минуту.</p>
+      </article>
+      <article class="card rv">
+        <span class="card__num">02 / Публика</span>
+        <h3>Улица не хлопает из вежливости</h3>
+        <p>Каждый день мы играем перед случайными людьми, которые не обязаны останавливаться. Держать внимание — наша ежедневная работа.</p>
+      </article>
+      <article class="card rv">
+        <span class="card__num">03 / Интерактив</span>
+        <h3>Гость берёт микрофон</h3>
+        <p>Любой желающий может выйти и спеть или сыграть с нами. Мы умеем подхватить с полуноты — на улице это происходит постоянно.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. ВИДЕО-ДОКАЗАТЕЛЬСТВО
+     TODO: заменить блок .video на iframe (YouTube / VK / Rutube)
+     TODO: подставить 4 фото в .tile (background-image)
+     TODO: ссылки на Telegram и VK
+     ============================================================ -->
+<section id="video">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Как это звучит вживую</span>
+      <h2>Одно видео <span>вместо описаний</span></h2>
+      <p class="lead">Ничего не поставлено: обычный вечер, случайные прохожие, человек из толпы поёт с нами припев.</p>
+    </div>
+
+    <div class="video rv" id="videoBox" role="button" tabindex="0" aria-label="Смотреть видео выступления">
+      <div class="video__play"></div>
+      <span class="video__label">TODO: вставить видео с улицы · 1–2 мин</span>
+    </div>
+
+    <div class="tiles">
+      <figure class="tile rv" style="margin:0"><span>TODO: фото 1 — Арбат</span></figure>
+      <figure class="tile rv" style="margin:0"><span>TODO: фото 2 — толпа</span></figure>
+      <figure class="tile rv" style="margin:0"><span>TODO: фото 3 — гость поёт</span></figure>
+      <figure class="tile rv" style="margin:0"><span>TODO: фото 4 — состав</span></figure>
+    </div>
+
+    <div class="socials rv">
+      <span class="eyebrow" style="margin:0 6px 0 0">Больше живых видео:</span>
+      <a class="social" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M9.04 15.47 8.7 20.2c.5 0 .72-.21.98-.47l2.35-2.24 4.87 3.56c.9.5 1.54.24 1.78-.83l3.22-15.1c.32-1.33-.48-1.85-1.35-1.53L1.16 9.9c-1.3.5-1.28 1.23-.22 1.55l4.9 1.53L17.2 6.1c.53-.34 1.02-.15.62.2z"/></svg>
+        Telegram
+      </a>
+      <a class="social" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12.8 16.7c-6.2 0-9.9-4.3-10-11.3h3.1c.1 5.2 2.4 7.4 4.2 7.8V5.4h2.9v4.5c1.8-.2 3.7-2.3 4.3-4.5h2.9c-.5 2.7-2.5 4.8-3.9 5.6 1.4.7 3.7 2.5 4.6 5.7h-3.2c-.7-2.2-2.4-3.9-4.7-4.2v4.2z"/></svg>
+        VK
+      </a>
+      <a class="social" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M10 15.6 15.2 12 10 8.4zM21 6.5c.3 1.1.5 2.6.5 4.5l.02 1c0 2-.15 3.6-.5 4.6-.3 1-.9 1.5-1.8 1.7-.9.2-3.2.35-7.2.35s-6.3-.1-7.2-.35c-.9-.2-1.5-.7-1.8-1.7-.3-1.1-.5-2.6-.5-4.6l.02-1c0-1.9.16-3.4.48-4.5.3-1 .9-1.5 1.8-1.7C5.7 4.6 8 4.5 12 4.5s6.3.1 7.2.3c.9.2 1.5.7 1.8 1.7"/></svg>
+        YouTube
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="tape tape--alt" aria-hidden="true">
+  <span>Гость выходит и поёт — и это лучший момент вечера · Гость выходит и поёт — и это лучший момент вечера · Гость выходит и поёт — и это лучший момент вечера · </span>
+</div>
+
+<!-- ============================================================
+     4. КАК ЭТО РАБОТАЕТ
+     ============================================================ -->
+<section id="kak">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Сценарий вечера</span>
+      <h2>Как проходит <span>выступление</span></h2>
+      <p class="lead">Один и тот же путь: от фона за спиной гостей — до момента, когда поют все.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step rv">
+        <div class="step__n">01</div>
+        <div>
+          <h3>Приезжаем и ставимся</h3>
+          <p>За час до начала. Своё оборудование, свой звук — от вас нужна только розетка.</p>
+        </div>
+      </div>
+      <div class="step rv">
+        <div class="step__n">02</div>
+        <div>
+          <h3>Играем фоном</h3>
+          <p>Пока гости собираются и едят — акустика на комфортной громкости, разговорам не мешаем.</p>
+        </div>
+      </div>
+      <div class="step rv">
+        <div class="step__n">03</div>
+        <div>
+          <h3>Зовём гостей к микрофону</h3>
+          <p>Мягко, без конкурсов и ведущего. Сначала выходит один — дальше очередь выстраивается сама.</p>
+        </div>
+      </div>
+      <div class="step rv">
+        <div class="step__n">04</div>
+        <div>
+          <h3>Кульминация: поют все</h3>
+          <p>Финальный блок, где зал поёт хором. Тот самый момент, ради которого всё и затевалось.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:34px" class="rv"><a class="btn" href="#zayavka">Хочу такой вечер</a></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. ФОРМАТЫ + СОСТАВ
+     ============================================================ -->
+<section id="formaty">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Форматы</span>
+      <h2>Кому мы <span>подходим</span></h2>
+    </div>
+
+    <div class="grid grid--2">
+      <article class="format rv">
+        <span class="eyebrow">Для компаний</span>
+        <h3>Корпоратив и тимбилдинг</h3>
+        <p style="color:#3A3A33">Живая музыка ломает офисную субординацию быстрее любой игры: у микрофона все равны.</p>
+        <ul>
+          <li>Новый год, юбилей компании, отраслевые праздники</li>
+          <li>Выездные сессии и тимбилдинги за городом</li>
+          <li>Открытия, презентации, летние площадки</li>
+          <li>Совместный финал: отдел поёт вместе с нами</li>
+        </ul>
+      </article>
+      <article class="format rv">
+        <span class="eyebrow">Для частных праздников</span>
+        <h3>Свадьба и день рождения</h3>
+        <p style="color:#3A3A33">Формат для тех, кому не нужен ведущий с конкурсами, — нужна живая атмосфера и настоящие эмоции.</p>
+        <ul>
+          <li>Свадьба: welcome-зона, ужин, вечерний блок</li>
+          <li>День рождения, годовщина, домашний праздник</li>
+          <li>Дача, лофт, веранда, квартирник</li>
+          <li>Сюрприз: песня от гостей имениннику</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="lineup rv">
+      <span class="eyebrow">Гибкость состава</span>
+      <h3>Подбираем звучание под площадку</h3>
+      <p class="muted" style="margin:10px 0 0; max-width:64ch">От одного голоса с гитарой в небольшом зале — до полного состава с барабанами, когда нужно поднять танцпол.</p>
+      <div class="chips">
+        <span class="chip chip--on">Соло</span>
+        <span class="chip chip--on">Дуэт</span>
+        <span class="chip chip--on">Трио</span>
+        <span class="chip">Расширенный состав</span>
+        <span class="chip">Акустика без подзвучки</span>
+        <span class="chip">Барабаны / перкуссия</span>
+        <span class="chip">Клавиши</span>
+        <span class="chip">Духовые</span>
+      </div>
+      <p class="note">TODO: оставить только те составы и инструменты, которые реально доступны.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. ПАКЕТЫ И ЦЕНЫ
+     TODO: подставить реальные суммы вместо «от 00 000 ₽»
+     ============================================================ -->
+<section id="ceny">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Пакеты</span>
+      <h2>Сколько это <span>стоит</span></h2>
+      <p class="lead">Ориентировочные цены по Москве. Точную стоимость считаем под площадку, состав и длительность.</p>
+    </div>
+
+    <div class="grid grid--3">
+      <article class="price rv">
+        <span class="eyebrow">Акустика</span>
+        <h3>Уличный сет</h3>
+        <div class="price__tag">от 00 000 ₽<small>за час</small></div>
+        <ul>
+          <li>Соло или дуэт</li>
+          <li>1 час живой музыки</li>
+          <li>Фоновый и интерактивный блок</li>
+          <li>Своё оборудование</li>
+        </ul>
+        <a class="btn btn--ghost btn--wide" href="#zayavka">Выбрать</a>
+      </article>
+
+      <article class="price price--hot rv">
+        <span class="badge">Чаще всего берут</span>
+        <span class="eyebrow">Вечер целиком</span>
+        <h3>Полная программа</h3>
+        <div class="price__tag">от 00 000 ₽<small>за час</small></div>
+        <ul>
+          <li>Трио с подзвучкой</li>
+          <li>2–3 часа с перерывами</li>
+          <li>Открытый микрофон для гостей</li>
+          <li>Согласование программы заранее</li>
+        </ul>
+        <a class="btn btn--wide" href="#zayavka">Выбрать</a>
+      </article>
+
+      <article class="price rv">
+        <span class="eyebrow">Максимум</span>
+        <h3>Расширенный состав</h3>
+        <div class="price__tag">от 00 000 ₽<small>за час</small></div>
+        <ul>
+          <li>Барабаны, клавиши, духовые</li>
+          <li>Танцевальный финал</li>
+          <li>Большие залы и открытые площадки</li>
+          <li>Подбор песен под ваш список</li>
+        </ul>
+        <a class="btn btn--ghost btn--wide" href="#zayavka">Выбрать</a>
+      </article>
+    </div>
+    <p class="note rv">TODO: уточнить условия выезда за МКАД, доплату за трансфер и предоплату.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. ФАКТЫ / ОТЗЫВЫ
+     TODO: подставить реальные цифры и отзывы
+     ============================================================ -->
+<section id="opyt">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Опыт</span>
+      <h2>Что за нами <span>стоит</span></h2>
+    </div>
+
+    <div class="facts rv">
+      <div class="fact"><b>N</b><span>лет на улицах Москвы</span></div>
+      <div class="fact"><b>N+</b><span>выступлений</span></div>
+      <div class="fact"><b>N</b><span>городских точек</span></div>
+    </div>
+
+    <div class="grid grid--2" style="margin-top:26px">
+      <blockquote class="quote rv">
+        <p>TODO: отзыв с мероприятия. Пока их нет — блок можно скрыть или заменить отзывом слушателя с улицы.</p>
+        <cite>Имя · корпоратив · месяц год</cite>
+      </blockquote>
+      <blockquote class="quote rv">
+        <p>TODO: второй отзыв. Сильнее всего работает цитата про момент, когда гости вышли петь.</p>
+        <cite>Имя · свадьба · месяц год</cite>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     8. FAQ
+     TODO: заменить ответы на реальные условия
+     ============================================================ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Вопросы</span>
+      <h2>Что обычно <span>спрашивают</span></h2>
+    </div>
+
+    <div class="faq rv">
+      <div class="faq__item">
+        <button class="faq__q" type="button">А если никто не захочет петь?</button>
+        <div class="faq__a"><p>TODO. Тогда вечер идёт как обычный живой концерт — программа самодостаточна. Но на улице люди подходят почти всегда, а на празднике, где все друг друга знают, — тем более. Мы никого не вытаскиваем силой.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q" type="button">Какое оборудование нужно с вашей стороны?</button>
+        <div class="faq__a"><p>TODO. Привозим свой звук: колонки, микрофоны, стойки. От площадки нужны розетка и место примерно N×N метров. Для больших залов согласуем подключение к местной аппаратуре.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q" type="button">Работаете за городом?</button>
+        <div class="faq__a"><p>TODO. Да, выезжаем по Московской области. Трансфер считается отдельно, от N км — доплата N ₽.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q" type="button">Как быстро можно забронировать?</button>
+        <div class="faq__a"><p>TODO. Обычно отвечаем в течение N часов. Дату держим после предоплаты N%. Иногда можем выйти день в день — напишите, проверим состав.</p></div>
+      </div>
+      <div class="faq__item">
+        <button class="faq__q" type="button">Что если нужен нестандартный формат?</button>
+        <div class="faq__a"><p>TODO. Играли на N. Если у вас квартирник, поход, крыша или трансляция — расскажите задачу, придумаем под неё состав и программу.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tape" aria-hidden="true">
+  <span>Оставьте заявку · Ответим сегодня · Оставьте заявку · Ответим сегодня · Оставьте заявку · Ответим сегодня · Оставьте заявку · Ответим сегодня · </span>
+</div>
+
+<!-- ============================================================
+     9. ФИНАЛЬНЫЙ CTA + ФОРМА
+     Форма без реальной отправки: console.log при сабмите
+     TODO: подставить ссылки WhatsApp и Telegram
+     ============================================================ -->
+<section class="final" id="zayavka">
+  <div class="wrap">
+    <div class="grid grid--2" style="align-items:start; gap:32px">
+      <div class="rv">
+        <span class="eyebrow">Заявка</span>
+        <h2>Расскажите <span>про ваш вечер</span></h2>
+        <p class="lead" style="margin-top:14px">Ответим в течение дня, предложим состав и посчитаем стоимость. Ни к чему не обязывает.</p>
+        <div class="alt">
+          <p>Быстрее — в мессенджер</p>
+          <div class="socials" style="margin-top:0">
+            <a class="social" href="#" target="_blank" rel="noopener">Написать в Telegram</a>
+            <a class="social" href="#" target="_blank" rel="noopener">Написать в WhatsApp</a>
+          </div>
+        </div>
+      </div>
+
+      <form class="form rv" id="leadForm" novalidate>
+        <div class="field">
+          <label for="name">Как вас зовут</label>
+          <input id="name" name="name" type="text" placeholder="Имя" required>
+        </div>
+        <div class="field">
+          <label for="contact">Телефон или Telegram</label>
+          <input id="contact" name="contact" type="text" placeholder="+7 ... или @nickname" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="type">Тип мероприятия</label>
+            <select id="type" name="type">
+              <option value="corporate">Корпоратив</option>
+              <option value="wedding">Свадьба</option>
+              <option value="birthday">День рождения</option>
+              <option value="other">Другое</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="date">Дата</label>
+            <input id="date" name="date" type="date">
+          </div>
+        </div>
+        <button class="btn btn--wide" type="submit">Отправить заявку</button>
+        <div class="form__ok" id="formOk">Заявка принята. Свяжемся с вами сегодня.</div>
+        <p class="note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных. <!-- TODO: ссылка на политику --></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo" style="margin-bottom:10px">Уличная музыка <b>Москвы</b></div>
+    <p style="margin:0">Живая музыка на корпоративы, свадьбы и дни рождения. Москва и область.<br>
+    <!-- TODO: контакты --> <a href="tel:+70000000000">+7 (000) 000-00-00</a> · <a href="#" target="_blank" rel="noopener">Telegram</a> · <a href="#" target="_blank" rel="noopener">VK</a></p>
+  </div>
+</footer>
+
+<!-- Мобильная панель действий -->
+<div class="sticky" id="sticky">
+  <a class="btn" href="#zayavka">Заявка</a>
+  <a class="btn btn--ghost" href="#" target="_blank" rel="noopener">Telegram</a>
+</div>
+
+<script>
+/* ── FAQ-аккордеон ───────────────────────────────────────── */
+document.querySelectorAll('.faq__q').forEach(function(q){
+  q.addEventListener('click', function(){
+    var item = q.parentElement;
+    var open = item.classList.contains('open');
+    document.querySelectorAll('.faq__item.open').forEach(function(i){
+      i.classList.remove('open');
+      i.querySelector('.faq__a').style.maxHeight = null;
+    });
+    if(!open){
+      item.classList.add('open');
+      var a = item.querySelector('.faq__a');
+      a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+
+/* ── Появление блоков при скролле ────────────────────────── */
+if('IntersectionObserver' in window){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:.12, rootMargin:'0px 0px -40px'});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+}else{
+  document.querySelectorAll('.rv').forEach(function(el){ el.classList.add('in'); });
+}
+
+/* ── Мобильная панель после первого экрана ───────────────── */
+var sticky = document.getElementById('sticky');
+window.addEventListener('scroll', function(){
+  sticky.classList.toggle('on', window.scrollY > window.innerHeight * 0.8);
+}, {passive:true});
+
+/* ── Видео-заглушка ──────────────────────────────────────── */
+/* TODO: заменить на реальный iframe и удалить обработчик */
+var videoBox = document.getElementById('videoBox');
+videoBox.addEventListener('click', function(){ console.log('Клик по видео — вставьте iframe'); });
+videoBox.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') videoBox.click(); });
+
+/* ── Форма: только UI, без отправки ──────────────────────── */
+document.getElementById('leadForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var data = Object.fromEntries(new FormData(e.target).entries());
+  console.log('Заявка:', data); /* TODO: отправка на бэкенд / в Telegram-бота */
+  if(!data.name || !data.contact){
+    console.log('Не заполнены обязательные поля');
+    return;
+  }
+  document.getElementById('formOk').classList.add('show');
+  e.target.reset();
+});
+</script>
+</body>
+</html>
