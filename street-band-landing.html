@@ -301,6 +301,9 @@ a{color:inherit}
   font-family:var(--body); font-size:16px; border-radius:0; appearance:none;
 }
 .field input:focus,.field select:focus{border-color:var(--acid); outline:none}
+.field__err{display:none; margin-top:7px; font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:#FF6B5E}
+.field.invalid input{border-color:#FF6B5E}
+.field.invalid .field__err{display:block}
 .row{display:grid; gap:16px}
 @media(min-width:640px){.row{grid-template-columns:1fr 1fr}}
 .form__ok{
@@ -696,11 +699,13 @@ footer a{color:var(--acid); text-decoration:none}
       <form class="form rv" id="leadForm" novalidate>
         <div class="field">
           <label for="name">Как вас зовут</label>
-          <input id="name" name="name" type="text" placeholder="Имя" required>
+          <input id="name" name="name" type="text" placeholder="Имя" required aria-describedby="nameErr">
+          <p class="field__err" id="nameErr">Пожалуйста, укажите имя.</p>
         </div>
         <div class="field">
           <label for="contact">Телефон или Telegram</label>
-          <input id="contact" name="contact" type="text" placeholder="+7 ... или @nickname" required>
+          <input id="contact" name="contact" type="text" placeholder="+7 ... или @nickname" required aria-describedby="contactErr">
+          <p class="field__err" id="contactErr">Пожалуйста, укажите телефон или Telegram.</p>
         </div>
         <div class="row">
           <div class="field">
@@ -781,15 +786,40 @@ var videoBox = document.getElementById('videoBox');
 videoBox.addEventListener('click', function(){ console.log('Клик по видео — вставьте iframe'); });
 videoBox.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') videoBox.click(); });
 
-/* ── Форма: только UI, без отправки ──────────────────────── */
-document.getElementById('leadForm').addEventListener('submit', function(e){
+/* ── Форма: валидация + UI, без отправки ─────────────────── */
+var leadForm = document.getElementById('leadForm');
+
+function setFieldValidity(input, valid){
+  var field = input.closest('.field');
+  field.classList.toggle('invalid', !valid);
+  input.setAttribute('aria-invalid', valid ? 'false' : 'true');
+}
+
+['name','contact'].forEach(function(id){
+  var input = document.getElementById(id);
+  input.addEventListener('input', function(){
+    if(input.value.trim()) setFieldValidity(input, true);
+  });
+});
+
+leadForm.addEventListener('submit', function(e){
   e.preventDefault();
   var data = Object.fromEntries(new FormData(e.target).entries());
-  console.log('Заявка:', data); /* TODO: отправка на бэкенд / в Telegram-бота */
-  if(!data.name || !data.contact){
-    console.log('Не заполнены обязательные поля');
+
+  var nameInput = document.getElementById('name');
+  var contactInput = document.getElementById('contact');
+  var nameValid = !!data.name.trim();
+  var contactValid = !!data.contact.trim();
+  setFieldValidity(nameInput, nameValid);
+  setFieldValidity(contactInput, contactValid);
+
+  if(!nameValid || !contactValid){
+    document.getElementById('formOk').classList.remove('show');
+    (nameValid ? contactInput : nameInput).focus();
     return;
   }
+
+  console.log('Заявка:', data); /* TODO: отправка на бэкенд / в Telegram-бота */
   document.getElementById('formOk').classList.add('show');
   e.target.reset();
 });
