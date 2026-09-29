@@ -18,9 +18,62 @@ guests are invited up to sing and play along.
   `prefers-reduced-motion` fallback.
 - Sticky mobile action bar (CTA + contact link) that appears after the hero.
 - Accessible lead form: inline validation errors, `aria-invalid`, and focus
-  management on invalid submit — no silent failures.
+  management on invalid submit — no silent failures (see
+  [Lead form validation logic](#lead-form-validation-logic) below).
 - Dark, high-contrast "street poster" visual style (black asphalt + acid
   yellow accent) built with plain CSS custom properties, no framework.
+
+## Lead form validation logic
+
+`#leadForm` validates client-side only (see `CLAUDE.md` — there is no
+backend yet). The two required fields (`name`, `contact`) are validated
+independently, both on every keystroke and on submit:
+
+```
+LIVE TYPING — #name and #contact, handled independently
+─────────────────────────────────────────────────────────
+  keystroke in a field
+        │
+        ▼
+  field.value.trim() empty?
+        │
+        ├── no  ──▶ clear THIS field's error
+        │           (.invalid off, aria-invalid="false")
+        └── yes ──▶ leave error state as-is
+
+
+ON SUBMIT — #leadForm
+─────────────────────────────────────────────────────────
+  submit
+        │
+        ▼
+  preventDefault(); read {name, contact}
+        │
+        ▼
+  validate name              validate contact
+  (independently:            (independently:
+   empty ─▶ mark .invalid     empty ─▶ mark .invalid
+   filled ─▶ clear .invalid)  filled ─▶ clear .invalid)
+        │                            │
+        └─────────────┬──────────────┘
+                       ▼
+          name AND contact both non-empty?
+                       │
+            ┌──────────┴──────────┐
+            NO                    YES
+            │                      │
+            ▼                      ▼
+   hide #formOk (".show" off)   console.log(data)
+   focus(): #name if invalid,   → TODO: send to backend/bot
+            else #contact       show #formOk (".show" on)
+            │                   e.target.reset()
+            ▼                      │
+          STOP                   done
+```
+
+Both fields always get their own visual state (independent `.invalid`
+classes) — only the *focus* target picks one field to jump to, preferring
+`name` when both are empty.
 
 ## Tech stack
 
@@ -67,6 +120,7 @@ before going live. Search for `TODO` to find all of them, including:
 ```
 .
 ├── README.md
+├── CLAUDE.md                  # guidance for Claude Code sessions in this repo
 └── street-band-landing.html   # entire site: markup, styles, and scripts
 ```
 
